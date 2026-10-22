@@ -1,6 +1,6 @@
 # PawtoPaw - Backend API REST 🐾
 
-Servidor backend y API REST para la plataforma **PawtoPaw**, construido con Node.js, Express y PostgreSQL[cite: 1, 2]. Gestiona la autenticación de usuarios mediante JWT, el catálogo de productos y servicios de petsitters, el registro de compras y las reseñas[cite: 1, 4, 5].
+Servidor backend y API REST para la plataforma **PawtoPaw**, construido con Node.js, Express y PostgreSQL. Gestiona la autenticación de usuarios mediante JWT, el catálogo de productos y servicios de petsitters, el registro de compras y las reseñas.
 
 ## 🚀 Tecnologías y Dependencias
 
