@@ -1,0 +1,77 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "PawtoPaw Marketplace API",
+  "dateExported": "2026-10-22T14:00:00.000Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "name": "Registrar Usuario",
+      "url": "http://localhost:3000/usuarios",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nombre\": \"Ale Lara\",\n  \"email\": \"ale@pawtopaw.cl\",\n  \"password\": \"123456\"\n}"
+      }
+    },
+    {
+      "name": "Iniciar Sesión (Login)",
+      "url": "http://localhost:3000/login",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"ale@pawtopaw.cl\",\n  \"password\": \"123456\"\n}"
+      }
+    },
+    {
+      "name": "Obtener Artículos",
+      "url": "http://localhost:3000/articulos",
+      "method": "GET"
+    },
+    {
+      "name": "Crear Artículo",
+      "url": "http://localhost:3000/articulos",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer TU_TOKEN_AQUI"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"titulo\": \"Cama Acolchada L\",\n  \"precio\": 25000,\n  \"imagen\": \"https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=500\",\n  \"usuario_id\": 1,\n  \"tipo_id\": 1\n}"
+      }
+    },
+    {
+      "name": "Registrar Compra",
+      "url": "http://localhost:3000/compras",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer TU_TOKEN_AQUI"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"usuario_id\": 1,\n  \"articulo_id\": 1\n}"
+      }
+    },
+    {
+      "name": "Crear Reseña",
+      "url": "http://localhost:3000/resenas",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer TU_TOKEN_AQUI"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"comentario\": \"Excelente servicio y muy puntual\",\n  \"calificacion\": 5,\n  \"usuario_id\": 1,\n  \"articulo_id\": 1\n}"
+      }
+    }
+  ]
+}
