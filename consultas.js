@@ -71,12 +71,27 @@ const registrarResena = async (comentario, calificacion, usuario_id, articulo_id
   return rows[0];
 };
 
+const eliminarArticulo = async (id) => {
+  const consulta = 'DELETE FROM articulo WHERE id = $1 RETURNING id';
+  const { rows } = await pool.query(consulta, [id]);
+  return rows[0];
+};
+
+const editarArticulo = async (id, titulo, precio, imagen, tipo_id) => {
+  const consulta = 'UPDATE articulo SET titulo = $1, precio = $2, imagen = $3, tipo_id = $4 WHERE id = $5 RETURNING *';
+  const values = [titulo, precio, imagen, tipo_id, id];
+  const { rows } = await pool.query(consulta, values);
+  return rows[0];
+};
+
 module.exports = {
   pool,
   registrarUsuario,
   verificarCredenciales,
   obtenerArticulos,
   crearArticulo,
+  eliminarArticulo,
+  editarArticulo,
   registrarCompra,
   registrarResena
 };

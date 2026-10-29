@@ -7,6 +7,8 @@ const {
   verificarCredenciales,
   obtenerArticulos,
   crearArticulo,
+  eliminarArticulo,
+  editarArticulo,
   registrarCompra,
   registrarResena
 } = require('./consultas');
@@ -70,6 +72,33 @@ app.post('/articulos', verificarToken, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el artículo' });
+  }
+});
+
+app.put('/articulos/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { titulo, precio, imagen, tipo_id } = req.body;
+    const actualizado = await editarArticulo(id, titulo, precio, imagen, tipo_id);
+    if (!actualizado) {
+      return res.status(404).json({ message: 'Artículo no encontrado' });
+    }
+    res.status(200).json({ mensaje: 'Artículo actualizado con éxito', articulo: actualizado });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar el artículo' });
+  }
+});
+
+app.delete('/articulos/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const eliminado = await eliminarArticulo(id);
+    if (!eliminado) {
+      return res.status(404).json({ message: 'Artículo no encontrado' });
+    }
+    res.status(200).json({ mensaje: 'Artículo eliminado con éxito' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar el artículo' });
   }
 });
 
