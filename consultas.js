@@ -45,7 +45,7 @@ const verificarCredenciales = async (email, password) => {
 };
 
 const obtenerArticulos = async () => {
-  const consulta = 'SELECT id, titulo, precio, imagen, tipo_id FROM articulo ORDER BY id DESC';
+  const consulta = 'SELECT id, titulo, precio, imagen, tipo_id, usuario_id FROM articulo ORDER BY id DESC';
   const { rows } = await pool.query(consulta);
   return rows;
 };
