@@ -2,14 +2,21 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'pawtopaw',
-  port: process.env.DB_PORT || 5432,
-  allowExitOnIdle: true
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+      }
+    : {
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || 'postgres',
+        database: process.env.DB_NAME || 'pawtopaw',
+        port: process.env.DB_PORT || 5432,
+        allowExitOnIdle: true
+      }
+);
 
 const registrarUsuario = async (nombre, email, password) => {
   const passwordEncriptada = bcrypt.hashSync(password, 10);
