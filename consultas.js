@@ -1,6 +1,6 @@
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const pool = new Pool(
   process.env.DATABASE_URL
