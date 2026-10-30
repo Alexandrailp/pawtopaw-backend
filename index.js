@@ -61,14 +61,16 @@ app.get('/articulos', async (req, res) => {
 
 app.post('/articulos', verificarToken, async (req, res) => {
   try {
-    const { titulo, precio, imagen, usuario_id, tipo_id } = req.body;
+    const { titulo, precio, imagen, tipo_id } = req.body;
+    const usuario_id = req.user?.id || req.body.usuario_id;
     if (!titulo || !precio || !imagen || !usuario_id || !tipo_id) {
-      return res.status(400).json({ message: 'Faltan datos del artículo' });
+      return res.status(400).json({ message: 'Faltan datos del artículo o usuario_id' });
     }
     const nuevoArticulo = await crearArticulo(titulo, precio, imagen, usuario_id, tipo_id);
     res.status(201).json({
       mensaje: 'Artículo publicado con éxito',
-      articulo_id: nuevoArticulo.id
+      articulo_id: nuevoArticulo.id,
+      usuario_id
     });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear el artículo' });

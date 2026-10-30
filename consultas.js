@@ -45,13 +45,19 @@ const verificarCredenciales = async (email, password) => {
 };
 
 const obtenerArticulos = async () => {
-  const consulta = 'SELECT id, titulo, precio, imagen, tipo_id, usuario_id FROM articulo ORDER BY id DESC';
+  const consulta = `
+    SELECT a.id, a.titulo, a.precio, a.imagen, a.tipo_id, a.usuario_id,
+           u.nombre AS vendedor, u.email AS usuario_email
+    FROM articulo a
+    LEFT JOIN usuario u ON a.usuario_id = u.id
+    ORDER BY a.id DESC
+  `;
   const { rows } = await pool.query(consulta);
   return rows;
 };
 
 const crearArticulo = async (titulo, precio, imagen, usuario_id, tipo_id) => {
-  const consulta = 'INSERT INTO articulo (titulo, precio, imagen, usuario_id, tipo_id) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+  const consulta = 'INSERT INTO articulo (titulo, precio, imagen, usuario_id, tipo_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, usuario_id';
   const values = [titulo, precio, imagen, usuario_id, tipo_id];
   const { rows } = await pool.query(consulta, values);
   return rows[0];
