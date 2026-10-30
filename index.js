@@ -10,7 +10,8 @@ const {
   eliminarArticulo,
   editarArticulo,
   registrarCompra,
-  registrarResena
+  registrarResena,
+  obtenerResenasPorArticulo
 } = require('./consultas');
 const {
   validarCredenciales,
@@ -120,18 +121,34 @@ app.post('/compras', verificarToken, async (req, res) => {
   }
 });
 
+app.get('/articulos/:id/resenas', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const resenas = await obtenerResenasPorArticulo(id);
+    res.status(200).json(resenas);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las reseñas del artículo', error: error.message });
+  }
+});
+
 app.post('/resenas', verificarToken, async (req, res) => {
   try {
-    const { comentario, calificacion, usuario_id, articulo_id } = req.body;
+    const usuario_id = req.user?.id || req.body.usuario_id;
+    const { comentario, calificacion, articulo_id } = req.body;
     if (!comentario || !calificacion || !usuario_id || !articulo_id) {
       return res.status(400).json({ message: 'Faltan datos de la reseña' });
     }
-    await registrarResena(comentario, calificacion, usuario_id, articulo_id);
+    const califNum = parseInt(calificacion, 10);
+    if (isNaN(califNum) || califNum < 1 || califNum > 5) {
+      return res.status(400).json({ message: 'La calificación debe ser entre 1 y 5 estrellas' });
+    }
+    const nuevaResena = await registrarResena(comentario, califNum, usuario_id, articulo_id);
     res.status(201).json({
-      mensaje: 'Reseña agregada con éxito'
+      mensaje: 'Reseña agregada con éxito',
+      resena: nuevaResena
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error al registrar la reseña' });
+    res.status(500).json({ message: 'Error al registrar la reseña', error: error.message });
   }
 });
 

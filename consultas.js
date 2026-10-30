@@ -47,9 +47,13 @@ const verificarCredenciales = async (email, password) => {
 const obtenerArticulos = async () => {
   const consulta = `
     SELECT a.id, a.titulo, a.precio, a.imagen, a.tipo_id, a.usuario_id,
-           u.nombre AS vendedor, u.email AS usuario_email
+           u.nombre AS vendedor, u.email AS usuario_email,
+           COALESCE(ROUND(AVG(r.calificacion)), 5)::INTEGER AS estrellas,
+           COALESCE(COUNT(r.id), 0)::INTEGER AS cantidad_resenas
     FROM articulo a
     LEFT JOIN usuario u ON a.usuario_id = u.id
+    LEFT JOIN resena r ON a.id = r.articulo_id
+    GROUP BY a.id, u.nombre, u.email
     ORDER BY a.id DESC
   `;
   const { rows } = await pool.query(consulta);
@@ -90,6 +94,19 @@ const editarArticulo = async (id, titulo, precio, imagen, tipo_id) => {
   return rows[0];
 };
 
+const obtenerResenasPorArticulo = async (articulo_id) => {
+  const consulta = `
+    SELECT r.id, r.comentario, r.calificacion, r.usuario_id, r.articulo_id,
+           u.nombre AS autor, u.email AS autor_email
+    FROM resena r
+    LEFT JOIN usuario u ON r.usuario_id = u.id
+    WHERE r.articulo_id = $1
+    ORDER BY r.id DESC
+  `;
+  const { rows } = await pool.query(consulta, [articulo_id]);
+  return rows;
+};
+
 module.exports = {
   pool,
   registrarUsuario,
@@ -99,5 +116,6 @@ module.exports = {
   eliminarArticulo,
   editarArticulo,
   registrarCompra,
-  registrarResena
+  registrarResena,
+  obtenerResenasPorArticulo
 };
