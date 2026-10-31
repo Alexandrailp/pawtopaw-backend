@@ -12,7 +12,9 @@ const {
   editarArticulo,
   registrarCompra,
   registrarResena,
-  obtenerResenasPorArticulo
+  obtenerResenasPorArticulo,
+  editarResena,
+  eliminarResena
 } = require('./consultas');
 const {
   validarCredenciales,
@@ -174,6 +176,51 @@ app.post('/resenas', verificarToken, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Error al registrar la reseña', error: error.message });
+  }
+});
+
+app.put('/resenas/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario_id = req.user?.id || req.body.usuario_id;
+    const { comentario, calificacion } = req.body;
+    if (!comentario || !calificacion || !usuario_id) {
+      return res.status(400).json({ message: 'Faltan datos de la reseña' });
+    }
+    const califNum = parseInt(calificacion, 10);
+    if (isNaN(califNum) || califNum < 1 || califNum > 5) {
+      return res.status(400).json({ message: 'La calificación debe ser entre 1 y 5 estrellas' });
+    }
+    const resenaActualizada = await editarResena(id, comentario, califNum, usuario_id);
+    if (!resenaActualizada) {
+      return res.status(404).json({ message: 'Reseña no encontrada o no tienes permisos para editarla' });
+    }
+    res.status(200).json({
+      mensaje: 'Reseña actualizada con éxito',
+      resena: resenaActualizada
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar la reseña', error: error.message });
+  }
+});
+
+app.delete('/resenas/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario_id = req.user?.id || req.body.usuario_id;
+    if (!usuario_id) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
+    const resenaEliminada = await eliminarResena(id, usuario_id);
+    if (!resenaEliminada) {
+      return res.status(404).json({ message: 'Reseña no encontrada o no tienes permisos para eliminarla' });
+    }
+    res.status(200).json({
+      mensaje: 'Reseña eliminada con éxito',
+      id: resenaEliminada.id
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar la reseña', error: error.message });
   }
 });
 

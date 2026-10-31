@@ -114,6 +114,20 @@ const actualizarUsuario = async (id, nombre, email) => {
   return rows[0];
 };
 
+const editarResena = async (id, comentario, calificacion, usuario_id) => {
+  const consulta = 'UPDATE resena SET comentario = $1, calificacion = $2 WHERE id = $3 AND usuario_id = $4 RETURNING *';
+  const values = [comentario, calificacion, id, usuario_id];
+  const { rows } = await pool.query(consulta, values);
+  return rows[0];
+};
+
+const eliminarResena = async (id, usuario_id) => {
+  const consulta = 'DELETE FROM resena WHERE id = $1 AND usuario_id = $2 RETURNING id, articulo_id';
+  const values = [id, usuario_id];
+  const { rows } = await pool.query(consulta, values);
+  return rows[0];
+};
+
 module.exports = {
   pool,
   registrarUsuario,
@@ -125,5 +139,7 @@ module.exports = {
   editarArticulo,
   registrarCompra,
   registrarResena,
-  obtenerResenasPorArticulo
+  obtenerResenasPorArticulo,
+  editarResena,
+  eliminarResena
 };
