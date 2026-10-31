@@ -107,10 +107,18 @@ const obtenerResenasPorArticulo = async (articulo_id) => {
   return rows;
 };
 
+const actualizarUsuario = async (id, nombre, email) => {
+  const consulta = 'UPDATE usuario SET nombre = $1, email = $2 WHERE id = $3 RETURNING id, nombre, email';
+  const values = [nombre, email, id];
+  const { rows } = await pool.query(consulta, values);
+  return rows[0];
+};
+
 module.exports = {
   pool,
   registrarUsuario,
   verificarCredenciales,
+  actualizarUsuario,
   obtenerArticulos,
   crearArticulo,
   eliminarArticulo,

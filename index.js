@@ -5,6 +5,7 @@ const { secretKey } = require('./secretKey');
 const {
   registrarUsuario,
   verificarCredenciales,
+  actualizarUsuario,
   obtenerArticulos,
   crearArticulo,
   eliminarArticulo,
@@ -48,6 +49,30 @@ app.post('/login', validarCredenciales, async (req, res) => {
     });
   } catch (error) {
     res.status(error.code || 500).json({ message: error.message || 'Error en el servidor' });
+  }
+});
+
+app.put('/usuarios/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, email } = req.body;
+    if (!nombre || !email) {
+      return res.status(400).json({ message: 'Nombre y email son requeridos' });
+    }
+    const tokenUserId = req.user?.id;
+    if (tokenUserId && Number(tokenUserId) !== Number(id)) {
+      return res.status(403).json({ message: 'No tienes permiso para actualizar este perfil' });
+    }
+    const usuarioActualizado = await actualizarUsuario(id, nombre, email);
+    if (!usuarioActualizado) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.status(200).json({
+      mensaje: 'Perfil actualizado con éxito',
+      usuario: usuarioActualizado
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar el usuario', error: error.message });
   }
 });
 
