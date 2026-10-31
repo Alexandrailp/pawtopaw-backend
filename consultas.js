@@ -48,7 +48,7 @@ const obtenerArticulos = async () => {
   const consulta = `
     SELECT a.id, a.titulo, a.precio, a.imagen, a.tipo_id, a.usuario_id,
            u.nombre AS vendedor, u.email AS usuario_email,
-           COALESCE(ROUND(AVG(r.calificacion)), 5)::INTEGER AS estrellas,
+           COALESCE(ROUND(AVG(r.calificacion)), 0)::INTEGER AS estrellas,
            COALESCE(COUNT(r.id), 0)::INTEGER AS cantidad_resenas
     FROM articulo a
     LEFT JOIN usuario u ON a.usuario_id = u.id
